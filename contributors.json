@@ -1,7 +1,7 @@
 [
   {
-    "github": "nayanchamp",
-    "name": "Nayan Prajapati",
+    "github": "mrpunyapal",
+    "name": "Punyapal Shah",
     "category": "Maintainer",
     "intro": "Building communities, content & tools for the PHP & Laravel ecosystem.",
     "techStack": ["Laravel", "PHP", "JavaScript"],
@@ -14,6 +14,19 @@
       { "name": "mrpunyapal/rector-pest",                "url": "https://packagist.org/packages/mrpunyapal/rector-pest",                "registry": "packagist" },
       { "name": "laravel-extended-relationships",        "url": "https://packagist.org/packages/mr-punyapal/laravel-extended-relationships",        "registry": "github"    }
     ],
+    "website": "https://mrpunyapal.dev",
+    "twitter": "MrPunyapal",
+    "blog": "https://mrpunyapal.dev/talks",
+    "openSource": [
+      { "name": "OSSForAll/I-AM-CONTRIBUTOR", "url": "https://github.com/OSSForAll/I-AM-CONTRIBUTOR" }
+    ],
+    "linkedin": "mrpunyapal"
+  },{
+    "github": "nayanchamp",
+    "name": "Nayan Prajapati",
+    "category": "Maintainer",
+    "intro": "Building communities, content & tools for the PHP & Laravel ecosystem.",
+    "techStack": ["Laravel", "PHP", "JavaScript"],
     "website": "https://alpswebsolutions.com",
     "twitter": "nayanchamp",
     "openSource": [
@@ -22,4 +35,5 @@
     "linkedin": "nayanchamp"
   }
 ]
+
 
