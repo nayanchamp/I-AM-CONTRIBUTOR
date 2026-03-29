@@ -1,0 +1,101 @@
+name: Auto-rebase contributors.json
+
+# pull_request_target runs with base-repo permissions even for fork PRs,
+# which lets us push back to the PR branch when "Allow edits from maintainers"
+# is enabled (the GitHub default).
+#
+# SECURITY: we only *read* contributors.json from the PR (plain data).
+# All scripts executed come from the base repo — never from the fork.
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    paths:
+      - contributors.json
+
+jobs:
+  rebase:
+    name: Rebase contributors.json against main
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout base repo (trusted scripts + current contributors.json)
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Fetch only the contributors.json data from the PR — no fork code executed
+      - name: Fetch PR's contributors.json
+        run: |
+          git fetch origin "refs/pull/${{ github.event.pull_request.number }}/head" --depth=1
+          git show FETCH_HEAD:contributors.json > /tmp/pr-contributors.json
+
+      - name: Compute conflict-free merge
+        run: |
+          node .github/scripts/merge-contributors.mjs \
+            contributors.json \
+            /tmp/pr-contributors.json \
+            > /tmp/merged-contributors.json
+
+      # Push the rebased file back to the PR branch.
+      # Works for same-repo branches always.
+      # Works for fork branches when "Allow edits from maintainers" is enabled (GitHub default).
+      - name: Push rebased file to PR branch
+        id: push
+        continue-on-error: true
+        env:
+          FORK_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          GH_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git remote add fork "https://x-access-token:${GH_TOKEN}@github.com/${FORK_REPO}"
+          git fetch fork "${PR_BRANCH}" --depth=1
+          git checkout -b pr-work "fork/${PR_BRANCH}"
+
+          cp /tmp/merged-contributors.json contributors.json
+
+          git add contributors.json
+          if git diff --cached --quiet; then
+            echo "contributors.json is already up to date — nothing to push."
+            exit 0
+          fi
+
+          git commit -m "chore: rebase contributors.json against main [skip ci]"
+          git push fork "HEAD:${PR_BRANCH}"
+
+      # Fallback: if the fork has "Allow edits from maintainers" disabled,
+      # post a one-command fix for the contributor.
+      - name: Comment if push failed
+        if: steps.push.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.payload.pull_request.number,
+              body: [
+                "⚠️ I tried to automatically rebase `contributors.json` against `main` but couldn't push to your branch.",
+                "",
+                "This usually means **Allow edits from maintainers** is turned off on your fork.",
+                "You can fix the conflict in one step:",
+                "",
+                "```bash",
+                "git fetch upstream",
+                "git rebase upstream/main",
+                "# contributors.json conflict? open it, keep ALL entries from both sides, then:",
+                "git add contributors.json",
+                "git rebase --continue",
+                "git push --force-with-lease",
+                "```"
+              ].join('\n')
+            })
