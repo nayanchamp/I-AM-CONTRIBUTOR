@@ -4,7 +4,11 @@
     "name": "Punyapal Shah",
     "category": "Maintainer",
     "intro": "Building communities, content & tools for the PHP & Laravel ecosystem.",
-    "techStack": ["Laravel", "PHP", "JavaScript"],
+    "techStack": [
+      "Laravel",
+      "PHP",
+      "JavaScript"
+    ],
     "packages": [
       {
         "name": "mrpunyapal/laravel-auth-jobs",
@@ -72,5 +76,9 @@
     "youtube": "https://youtube.com/@yourchannel",
     "linkedin": "samakshgrover/",
     "openSource": [{ "name": "org/repo", "url": "https://github.com/org/repo" }]
+  },
+  {
+    "github": "sonalidudhia",
+    "name": "sonali dudhia"
   }
 ]
