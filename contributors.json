@@ -58,11 +58,18 @@
     "linkedin": "mrpunyapal"
   },
   {
+    "github": "sonalidudhia",
+    "name": "sonali dudhia"
+  },
+  {
     "github": "samakshgrover",
     "name": "Samaksh Grover",
     "category": "Beginner",
     "intro": "A Software engineer",
-    "techStack": ["JavaScript", "Node.js"],
+    "techStack": [
+      "JavaScript",
+      "Node.js"
+    ],
     "packages": [
       {
         "name": "your-package",
@@ -75,10 +82,11 @@
     "blog": "https://dev.to/yourhandle",
     "youtube": "https://youtube.com/@yourchannel",
     "linkedin": "samakshgrover/",
-    "openSource": [{ "name": "org/repo", "url": "https://github.com/org/repo" }]
-  },
-  {
-    "github": "sonalidudhia",
-    "name": "sonali dudhia"
+    "openSource": [
+      {
+        "name": "org/repo",
+        "url": "https://github.com/org/repo"
+      }
+    ]
   }
 ]
