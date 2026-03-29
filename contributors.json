@@ -21,6 +21,23 @@
       { "name": "OSSForAll/I-AM-CONTRIBUTOR", "url": "https://github.com/OSSForAll/I-AM-CONTRIBUTOR" }
     ],
     "linkedin": "mrpunyapal"
+  },
+
+  {
+    "github": "darshan-99",
+    "name": "Darshan Soni",
+    "category": "Request",
+    "intro": "Building communities, content & tools for the PHP & Laravel ecosystem.",
+    "techStack": ["Laravel", "PHP", "JavaScript"],
+    "packages": [
+    ],
+    "website": "https://darshan-soni-dev.netlify.app",
+    "twitter": "me_darshan_soni",
+    "blog": "",
+    "openSource": [
+      { "name": "OSSForAll/I-AM-CONTRIBUTOR", "url": "https://github.com/OSSForAll/I-AM-CONTRIBUTOR" }
+    ],
+    "linkedin": "darshansoni"
   }
 ]
 
