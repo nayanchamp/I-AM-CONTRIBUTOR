@@ -54,8 +54,19 @@ jobs:
             /tmp/pr-contributors.json \
             > /tmp/merged-contributors.json
 
-      - name: Create merge commit and push to PR branch
+      - name: Check if rebase is needed
         if: steps.check.outputs.changed == 'true'
+        id: needs-rebase
+        run: |
+          if diff -q /tmp/merged-contributors.json /tmp/pr-contributors.json > /dev/null 2>&1; then
+            echo "PR already has the correct merged content — skipping."
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create merge commit and push to PR branch
+        if: steps.check.outputs.changed == 'true' && steps.needs-rebase.outputs.needed == 'true'
         id: push
         continue-on-error: true
         env:
@@ -95,7 +106,7 @@ jobs:
           echo "pushed=true" >> "$GITHUB_OUTPUT"
 
       - name: Post comment if push failed
-        if: steps.check.outputs.changed == 'true' && steps.push.outcome == 'failure'
+        if: steps.check.outputs.changed == 'true' && steps.needs-rebase.outputs.needed == 'true' && steps.push.outcome == 'failure'
         uses: actions/github-script@v7
         with:
           script: |
@@ -190,6 +201,12 @@ jobs:
                 const merged = run('node', [
                   '.github/scripts/merge-contributors.mjs', 'contributors.json', prFile
                 ]);
+
+                // Skip if PR already has the correct merged content (prevents redundant pushes)
+                if (merged.trim() === prContent.trim()) {
+                  core.info(`PR #${pr.number}: Already has correct merged content.`);
+                  continue;
+                }
 
                 // Reset to main HEAD before each PR so we always build on top of main
                 run('git', ['reset', '--hard', mainSha]);
